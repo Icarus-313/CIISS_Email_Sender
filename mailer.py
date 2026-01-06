@@ -2,44 +2,45 @@ import json
 import smtplib
 import os
 from email.message import EmailMessage
-from datetime import datetime
 
 # ======================
-# CONFIGURATION
+# ENV VARIABLES
 # ======================
-
-import os
 
 EMAIL = os.getenv("EMAIL")
 APP_PASSWORD = os.getenv("APP_PASSWORD")
 
+if not EMAIL or not APP_PASSWORD:
+    raise RuntimeError("EMAIL or APP_PASSWORD environment variable not set")
 
-BASE_DIR = "/Users/workstation/Desktop/CIISS_HADITH_SENDER"
+# ======================
+# FILE PATHS (RELATIVE)
+# ======================
 
-HADITH_FILE = os.path.join(BASE_DIR, "hadiths.json")
-EMAIL_FILE = os.path.join(BASE_DIR, "emails.json")
-STATE_FILE = os.path.join(BASE_DIR, "state.json")
-LOG_FILE = os.path.join(BASE_DIR, "cron.log")
+HADITH_FILE = "hadiths.json"
+EMAIL_FILE = "emails.json"
+STATE_FILE = "state.json"
 
-def log(msg):
-    with open(LOG_FILE, "a") as f:
-        f.write(f"[{datetime.now()}] {msg}\n")
+print("Mailer started")
 
 try:
-    log("Script started")
-
-    with open(HADITH_FILE) as f:
+    # Load data
+    with open(HADITH_FILE, encoding="utf-8") as f:
         hadiths = json.load(f)
 
-    with open(EMAIL_FILE) as f:
+    with open(EMAIL_FILE, encoding="utf-8") as f:
         emails = json.load(f)
 
-    with open(STATE_FILE) as f:
+    with open(STATE_FILE, encoding="utf-8") as f:
         state = json.load(f)
 
     index = state.get("last_sent_index", 0)
     hadith = hadiths[index]
 
+    print("Hadith index:", index)
+    print("Recipients:", emails)
+
+    # Email content
     html_content = f"""
     <html>
       <body style="font-family: Arial, sans-serif; background:#f9f9f9; padding:20px;">
@@ -61,6 +62,7 @@ try:
     </html>
     """
 
+    # Send emails
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(EMAIL, APP_PASSWORD)
 
@@ -74,20 +76,16 @@ try:
             msg.add_alternative(html_content, subtype="html")
 
             server.send_message(msg)
-            log(f"Sent to {recipient}")
+            print("Sent to:", recipient)
 
+    # Update state
     state["last_sent_index"] = (index + 1) % len(hadiths)
 
-    with open(STATE_FILE, "w") as f:
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f)
 
-    log("Script completed successfully")
+    print("Script completed successfully")
 
 except Exception as e:
-    log(f"ERROR: {e}")
-
-print("Mailer started")
-
-print("Using email:", EMAIL)
-print("Recipients loaded:", recipients)
-print("Hadith index:", index)
+    print("ERROR:", e)
+    raise
