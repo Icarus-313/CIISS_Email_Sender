@@ -85,3 +85,9 @@ try:
 
 except Exception as e:
     log(f"ERROR: {e}")
+
+print("Mailer started")
+
+print("Using email:", EMAIL)
+print("Recipients loaded:", recipients)
+print("Hadith index:", index)
