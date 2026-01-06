@@ -67,6 +67,9 @@ try:
     </html>
     """
 
+    print("EMAIL loaded:", EMAIL)
+    print("APP_PASSWORD loaded:", bool(APP_PASSWORD))
+
     # Send emails
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(EMAIL, APP_PASSWORD)
