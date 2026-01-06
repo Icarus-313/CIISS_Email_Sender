@@ -8,8 +8,10 @@ from datetime import datetime
 # CONFIGURATION
 # ======================
 
-EMAIL = "mraihanulhasan@gmail.com"
-APP_PASSWORD = "ilihtsimczkkgvcn"
+import os
+
+EMAIL = os.getenv("EMAIL")
+APP_PASSWORD = os.getenv("APP_PASSWORD")
 
 
 BASE_DIR = "/Users/workstation/Desktop/CIISS_HADITH_SENDER"
