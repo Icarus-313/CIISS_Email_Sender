@@ -31,9 +31,14 @@ try:
     with open(EMAIL_FILE, encoding="utf-8") as f:
         emails = json.load(f)
 
-    with open(STATE_FILE, encoding="utf-8") as f:
+    # Load or initialize state
+    if os.path.exists(STATE_FILE):
+     with open(STATE_FILE, encoding="utf-8") as f:
         state = json.load(f)
-
+    else:
+        state = {"last_sent_index": 0}
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f)
     index = state.get("last_sent_index", 0)
     hadith = hadiths[index]
 
