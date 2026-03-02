@@ -31,14 +31,6 @@ try:
     with open(EMAIL_FILE, encoding="utf-8") as f:
         emails = json.load(f)
 
-    # Load or initialize state
-    if os.path.exists(STATE_FILE):
-     with open(STATE_FILE, encoding="utf-8") as f:
-        state = json.load(f)
-    else:
-        state = {"last_sent_index": 0}
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f)
     from datetime import date
 
     today = date.today()
@@ -50,6 +42,8 @@ try:
         raise RuntimeError("Hadith dataset is empty")
 
     source = hadith.get("source", "Unknown")
+    html_content = html_content.replace("{{SOURCE}}", source)
+    html_content = html_content.replace("{{EMAIL}}", EMAIL)
 
     print("Hadith index:", index)
     print("Recipients:", emails)
@@ -126,10 +120,6 @@ try:
     print("Delivery confirmed")
 
     # Update state
-    state["last_sent_index"] = (index + 1) % len(hadiths)
-
-    with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f)
 
     print("Script completed successfully")
 
