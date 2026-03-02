@@ -63,7 +63,7 @@ try:
           <hr>
 
           <p style="font-size:14px; text-align:center; color:#555;">
-            Source: {['source']}
+            Source: {source}
           </p>
 
           <p style="text-align:center; font-size:12px; color:#999;">
