@@ -39,7 +39,10 @@ try:
         state = {"last_sent_index": 0}
     with open(STATE_FILE, "w", encoding="utf-8") as f:
         json.dump(state, f)
-    index = state.get("last_sent_index", 0)
+    from datetime import date
+
+    today = date.today()
+    index = today.toordinal() % len(hadiths)
     hadith = hadiths[index]
 
     print("Hadith index:", index)
