@@ -71,9 +71,6 @@ try:
             May Allah grant us understanding and practice. Ameen.
           </p>
 
-          <p style="text-align:center; font-size:11px; margin-top:15px;">
-            <a href="https://example.com/unsubscribe?email={{EMAIL}}">Unsubscribe</a>
-          </p>
 
         </div>
       </body>
