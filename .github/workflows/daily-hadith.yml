@@ -2,7 +2,7 @@ name: Daily Hadith Email
 
 on:
   schedule:
-    - cron: '10 16 * * *'   # 10 PM Bangladesh (UTC+6)
+    - cron: '25 16 * * *'   # 10 PM Bangladesh (UTC+6)
   workflow_dispatch:       # Allows manual run
 
 jobs:
