@@ -42,8 +42,6 @@ try:
         raise RuntimeError("Hadith dataset is empty")
 
     source = hadith.get("source", "Unknown")
-    html_content = html_content.replace("{{SOURCE}}", source)
-    html_content = html_content.replace("{{EMAIL}}", EMAIL)
 
     print("Hadith index:", index)
     print("Recipients:", emails)
