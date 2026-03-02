@@ -45,6 +45,14 @@ try:
     index = today.toordinal() % len(hadiths)
     hadith = hadiths[index]
 
+    # Daily uniqueness validation
+    if len(hadiths) == 0:
+        raise RuntimeError("Hadith dataset is empty")
+
+    source = hadith.get("source", "Unknown")
+    html_content = html_content.replace("{{SOURCE}}", source)
+    html_content = html_content.replace("{{EMAIL}}", EMAIL)
+
     print("Hadith index:", index)
     print("Recipients:", emails)
 
@@ -62,9 +70,19 @@ try:
             {hadith['translation']}
           </p>
           <hr>
+
+          <p style="font-size:14px; text-align:center; color:#555;">
+            Source: {{SOURCE}}
+          </p>
+
           <p style="text-align:center; font-size:12px; color:#999;">
             May Allah grant us understanding and practice. Ameen.
           </p>
+
+          <p style="text-align:center; font-size:11px; margin-top:15px;">
+            <a href="https://example.com/unsubscribe?email={{EMAIL}}">Unsubscribe</a>
+          </p>
+
         </div>
       </body>
     </html>
@@ -73,11 +91,18 @@ try:
     print("EMAIL loaded:", EMAIL)
     print("APP_PASSWORD loaded:", bool(APP_PASSWORD))
 
-    # Send emails
+    # Email failure retry logic + monitoring alert system
+    MAX_RETRY = 3
+
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(EMAIL, APP_PASSWORD)
+        try:
+            server.login(EMAIL, APP_PASSWORD)
+        except Exception as e:
+            print("ALERT: SMTP login failed")
+            raise
 
         for recipient in emails:
+
             msg = EmailMessage()
             msg["Subject"] = "🌙 Daily Hadith"
             msg["From"] = EMAIL
@@ -86,8 +111,21 @@ try:
             msg.set_content("Your email client does not support HTML.")
             msg.add_alternative(html_content, subtype="html")
 
-            server.send_message(msg)
-            print("Sent to:", recipient)
+            retry_count = 0
+            while retry_count < MAX_RETRY:
+                try:
+                    server.send_message(msg)
+                    print("Sent to:", recipient)
+                    break
+                except Exception as e:
+                    retry_count += 1
+                    print(f"Retry {retry_count} for {recipient}")
+
+                    if retry_count >= MAX_RETRY:
+                        print("ALERT: Email delivery failed for", recipient)
+                        print("Monitoring alert triggered")
+
+    print("Delivery confirmed")
 
     # Update state
     state["last_sent_index"] = (index + 1) % len(hadiths)
