@@ -1,0 +1,28 @@
+name: Daily Hadith Email
+
+on:
+  schedule:
+    - cron: '0 16 * * *'   # 10 PM Bangladesh (UTC+6)
+  workflow_dispatch:       # Allows manual run
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run mailer
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        run: python mailer.py
