@@ -92,7 +92,7 @@ try:
         for recipient in emails:
 
             msg = EmailMessage()
-            msg["Subject"] = "🌙 Daily Hadith"
+            msg["Subject"] = "Daily Hadith"
             msg["From"] = EMAIL
             msg["To"] = recipient
 
