@@ -52,7 +52,7 @@ try:
     <html>
       <body style="font-family: Arial, sans-serif; background:#f9f9f9; padding:20px;">
         <div style="max-width:600px; margin:auto; background:white; padding:25px; border-radius:8px;">
-          <h2 style="text-align:center;">🌙 Daily Hadith</h2>
+          <h2 style="text-align:center;">Daily Hadith</h2>
           <hr>
           <p style="font-size:24px; text-align:center; direction:rtl;">
             {hadith['arabic']}
